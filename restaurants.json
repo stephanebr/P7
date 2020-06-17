@@ -3,7 +3,7 @@
       "name":"Bronco",
       "address":"39 Rue des Petites Écuries, 75010 Paris",
       "lat":48.8737815,
-      "long":2.3501649,
+      "lng":2.3501649,
       "ratings":[
          {
             "stars":4,
@@ -19,7 +19,7 @@
       "name":"Babalou",
       "address":"4 Rue Lamarck, 75018 Paris",
       "lat":48.8865035,
-      "long":2.3442197,
+      "lng":2.3442197,
       "ratings":[
          {
             "stars":5,
@@ -35,7 +35,7 @@
     "name":"Ratacaba",
     "address":"177B Rue Paul Vaillant Couturie, 94140 Alfortville",
     "lat":48.804752,
-    "long":2.419906,
+    "lng":2.419906,
     "ratings":[
        {
           "stars":5,
@@ -51,7 +51,7 @@
     "name":"Kalabale",
     "address":"206 Rue Paul Vaillant Couturier, 94140 Alfortville",
     "lat":48.802038,
-    "long":2.421537,
+    "lng":2.421537,
     "ratings":[
        {
           "stars":4,
@@ -67,7 +67,7 @@
     "name":"Farfafouille",
     "address":"71 Quai Blanqui, 94140 Alfortville",
     "lat":48.800992, 
-    "long":2.417717,
+    "lng":2.417717,
     "ratings":[
        {
           "stars":5,
