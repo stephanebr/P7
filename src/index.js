@@ -92,7 +92,8 @@ window.onload = function () {
   // Fonction d'initialisation qui s'exécute lorsque le DOM est chargé
   initMap();
 
-  let comments = document.getElementById("commentaire");
+  let resto1 = document.getElementById("list-restaurant-1-list");
+  let comment1 = document.getElementById("list-restaurant-1");
   let restos = [];
 
   fetch("restaurants.json")
@@ -115,7 +116,8 @@ window.onload = function () {
         });
         
         resto.ratings.forEach((element) => {
-          comments.innerHTML += resto.name + "<br>" + element.comment + "<br>";
+          resto1.innerHTML = resto.name; //+ "<br>" + element.comment + "<br>";
+          comment1.innerHTML = element.comment;
         });
       });
     })
