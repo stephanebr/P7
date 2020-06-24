@@ -1,76 +1,6 @@
-// On initialise la latitude et la longitude de mon adresse (centre de la carte)
-var monAdresse = {
-  nom: "Mon adresse",
-  lat: 48.785738,
-  lon: 2.422402,
-};
+import {Carte} from './classes/Carte.js';
 
-var map = null;
-var infoWindow = null;
-
-// Fonction d'initialisation de la carte
-function initMap() {
-  var alfortville = new google.maps.LatLng(monAdresse.lat, monAdresse.lon);
-  // Créer l'objet "map" et l'insèrer dans l'élément HTML qui a l'ID "map"
-  map = new google.maps.Map(document.getElementById("map"), {
-    // Nous plaçons le centre de la carte avec les coordonnées ci-dessus
-    center: new google.maps.LatLng(monAdresse.lat, monAdresse.lon),
-    // Nous définissons le zoom par défaut
-    zoom: 11,
-    // Nous définissons le type de carte (ici carte routière)
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
-    // Nous activons les options de contrôle de la carte (plan, satellite...)
-    mapTypeControl: true,
-    // Nous désactivons la roulette de souris
-    scrollwheel: false,
-    mapTypeControlOptions: {
-      // Cette option sert à définir comment les options se placent
-      style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-    },
-    // Activation des options de navigation dans la carte (zoom...)
-    navigationControl: true,
-    navigationControlOptions: {
-      // Comment ces options doivent-elles s'afficher
-      style: google.maps.NavigationControlStyle.ZOOM_PAN,
-    },
-  });
-
-  infoWindow = new google.maps.InfoWindow();
-
-  // Try HTML5 geolocation.
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      function (position) {
-        var pos = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-
-        //infoWindow.setPosition(pos);
-        //infoWindow.setContent("Location found.");
-        infoWindow.open(map);
-        map.setCenter(pos);
-      },
-      function () {
-        handleLocationError(true, infoWindow, map.getCenter());
-      }
-    );
-  } else {
-    // Browser doesn't support Geolocation
-    handleLocationError(false, infoWindow, map.getCenter());
-  }
-
-  function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-    infoWindow.setPosition(pos);
-    infoWindow.setContent(
-      browserHasGeolocation
-        ? "Error: The Geolocation service failed."
-        : "Error: Your browser doesn't support geolocation."
-    );
-    infoWindow.open(map);
-  }
-}
-
+let carte = new Carte();
 const TILE_SIZE = 256;
 
 // The mapping between latitude, longitude and pixels is defined by the web
@@ -90,10 +20,18 @@ function project(latLng) {
 
 window.onload = function () {
   // Fonction d'initialisation qui s'exécute lorsque le DOM est chargé
-  initMap();
+  carte.initMap();
 
-  let resto1 = document.getElementById("list-restaurant-1-list");
-  let comment1 = document.getElementById("list-restaurant-1");
+  let resto1 = document.getElementById("resto-1");
+  let comment1 = document.getElementById("collapseOne");
+  let resto2 = document.getElementById("resto-2");
+  let comment2 = document.getElementById("collapseTwo");
+  let resto3 = document.getElementById("resto-3");
+  let comment3 = document.getElementById("collapseThree");
+  let resto4 = document.getElementById("resto-4");
+  let comment4 = document.getElementById("collapseFoor");
+  let resto5 = document.getElementById("resto-5");
+  let comment5 = document.getElementById("collapseFive");
   let restos = [];
 
   fetch("restaurants.json")
@@ -114,11 +52,19 @@ window.onload = function () {
           title: resto.name,
           map: map,
         });
-        
-        resto.ratings.forEach((element) => {
-          resto1.innerHTML = resto.name; //+ "<br>" + element.comment + "<br>";
-          comment1.innerHTML = element.comment;
-        });
+
+        google.maps.event.addListener(marker, 'click', function() {
+          resto1.innerHTML = restos[0].name; 
+          comment1.innerHTML = restos[0].ratings[0].comment;
+          resto2.innerHTML = restos[1].name; 
+          comment2.innerHTML = restos[1].ratings[0].comment;
+          resto3.innerHTML = restos[2].name; 
+          comment3.innerHTML = restos[2].ratings[0].comment;
+          resto4.innerHTML = restos[3].name; 
+          comment4.innerHTML = restos[3].ratings[0].comment;
+          resto5.innerHTML = restos[4].name; 
+          comment5.innerHTML = restos[4].ratings[0].comment; 
+        });               
       });
     })
     .catch(function (err) {
@@ -137,12 +83,12 @@ window.onload = function () {
     var markerAdresse = new google.maps.Marker({
       // A chaque boucle, la latitude et la longitude sont lues dans le tableau
       position: {
-        lat: monAdresse.lat,
-        lng: monAdresse.lon,
+        lat: carte.monAdresse.lat,
+        lng: carte.monAdresse.lon,
       },
       // On en profite pour ajouter une info-bulle contenant le nom de la ville
-      title: monAdresse.nom,
-      map: map,
+      title: carte.monAdresse.nom,
+      map: carte.map,
       icon: image
     });
   /*}*/
