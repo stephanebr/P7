@@ -33,6 +33,7 @@ window.onload = function () {
   let resto5 = document.getElementById("resto-5");
   let comment5 = document.getElementById("collapseFive");
   let restos = [];
+  let resto = d.namer
 
   fetch("restaurants.json")
     .then(function (data) {
@@ -50,46 +51,25 @@ window.onload = function () {
           },
           // On en profite pour ajouter une info-bulle contenant le nom de la ville
           title: resto.name,
-          map: map,
+          map: carte.map,
         });
-
-        google.maps.event.addListener(marker, 'click', function() {
-          resto1.innerHTML = restos[0].name; 
-          comment1.innerHTML = restos[0].ratings[0].comment;
-          resto2.innerHTML = restos[1].name; 
-          comment2.innerHTML = restos[1].ratings[0].comment;
-          resto3.innerHTML = restos[2].name; 
-          comment3.innerHTML = restos[2].ratings[0].comment;
-          resto4.innerHTML = restos[3].name; 
-          comment4.innerHTML = restos[3].ratings[0].comment;
-          resto5.innerHTML = restos[4].name; 
-          comment5.innerHTML = restos[4].ratings[0].comment; 
-        });               
-      });
+        //displayResto(1,5);
+      })
     })
-    .catch(function (err) {
-      alert(err);
-    });
-
-    var icon = './icons/adresse.png';
-
-    var image = new google.maps.MarkerImage(
-      icon,
-      new google.maps.Size(71, 71),
-      new google.maps.Point(0, 0),
-      new google.maps.Point(17, 34),
-      new google.maps.Size(25, 25));
-
-    var markerAdresse = new google.maps.Marker({
-      // A chaque boucle, la latitude et la longitude sont lues dans le tableau
-      position: {
-        lat: carte.monAdresse.lat,
-        lng: carte.monAdresse.lon,
-      },
-      // On en profite pour ajouter une info-bulle contenant le nom de la ville
-      title: carte.monAdresse.nom,
-      map: carte.map,
-      icon: image
-    });
   /*}*/
 };
+
+displayResto(min, max) {
+  foreach resto 
+    if resto.rating < min || resto.rating > max
+      if let elem = document.getElementById(resto.name) {
+        elem.display none
+      }
+      
+} else {
+  if let elem = document.getElementById(resto.nme)
+  if elem is undefined
+  createElement ....... 
+}
+
+}
