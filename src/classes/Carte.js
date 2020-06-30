@@ -18,7 +18,7 @@ class Carte {
         // Créer l'objet "map" et l'insèrer dans l'élément HTML qui a l'ID "map"
         this.map = new google.maps.Map(document.getElementById("map"), {
             // Nous plaçons le centre de la carte avec les coordonnées ci-dessus
-            center: new google.maps.LatLng(that.monAdresse.lat, that.monAdresse.lon),
+            center: alfortville,
             // Nous définissons le zoom par défaut
             zoom: 11,
             gestureHandling: 'greedy',
@@ -63,7 +63,7 @@ class Carte {
             )
         } else {
         // Browser doesn't support Geolocation
-        handleLocationError(false, this.infoWindow, this.map.getCenter());
+            handleLocationError(false, this.infoWindow, this.map.getCenter());
         }
     }
 

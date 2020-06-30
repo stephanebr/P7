@@ -2,6 +2,8 @@ import {Carte} from './classes/Carte.js';
 
 let carte = new Carte();
 const TILE_SIZE = 256;
+let numResto = 0;
+let numIdCollapse = 0;
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
@@ -18,22 +20,49 @@ function project(latLng) {
   );
 }
 
+function elementCard(nameResto, comment) {
+  let numHeading = 0;
+  let numDataTarget = 0;
+  let numAriaControls = 0;
+  let numAriaLabelldby = 0;
+  let card = `<div class="card">
+                <div id="${numHeading++}">
+                  <h5 class="mb-0">
+                    <button id="resto-${numResto++}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-${numDataTarget++}" aria-expanded="true" aria-controls="collapse-${numAriaControls++}">
+                      ${nameResto}
+                    </button>
+                  </h5>
+                </div>
+
+                <div id="collapse-${numIdCollapse++}" class="collapse show" aria-labelledby="${numAriaLabelldby++}" data-parent="#accordion">
+                  <div class="card-body">
+                    ${comment}
+                  </div>
+                </div>
+              </div>`;
+  return card;
+}
+
 window.onload = function () {
   // Fonction d'initialisation qui s'exécute lorsque le DOM est chargé
   carte.initMap();
-
-  let resto1 = document.getElementById("resto-1");
-  let comment1 = document.getElementById("collapseOne");
-  let resto2 = document.getElementById("resto-2");
-  let comment2 = document.getElementById("collapseTwo");
-  let resto3 = document.getElementById("resto-3");
-  let comment3 = document.getElementById("collapseThree");
-  let resto4 = document.getElementById("resto-4");
-  let comment4 = document.getElementById("collapseFoor");
-  let resto5 = document.getElementById("resto-5");
-  let comment5 = document.getElementById("collapseFive");
+  
   let restos = [];
-  let resto = d.namer
+  
+  //let resto = d.namer
+
+
+var icon = {
+        url: './icons/adresse.png', // url
+        scaledSize: new google.maps.Size(30, 30), // scaled size
+       };
+
+var iconBase = './icons/adresse.png';
+var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(carte.monAdresse.lat, carte.monAdresse.lon),
+          map: carte.map,
+          icon: icon
+        });
 
   fetch("restaurants.json")
     .then(function (data) {
@@ -54,12 +83,27 @@ window.onload = function () {
           map: carte.map,
         });
         //displayResto(1,5);
+        resto.ratings.forEach(element => {
+          console.log(elementCard(resto.name, element.comment));
+          let idAccordion = document.getElementById("accordion");
+          console.log(idResto);
+          console.log(idComment);
+          idAccordion.innerHTML = elementCard(idResto.innerHTML = resto.name, idComment.innerHTML = element.comment);
+          let idResto = document.getElementById(`resto-1`);
+          let idComment = document.getElementById(`collapse-1`);
+
+        });
+        
+
+        
+        
+        
       })
     })
   /*}*/
 };
 
-displayResto(min, max) {
+/*displayResto(min, max) {
   foreach resto 
     if resto.rating < min || resto.rating > max
       if let elem = document.getElementById(resto.name) {
@@ -70,6 +114,6 @@ displayResto(min, max) {
   if let elem = document.getElementById(resto.nme)
   if elem is undefined
   createElement ....... 
-}
+}*/
 
-}
+//}
