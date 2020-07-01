@@ -2,8 +2,6 @@ import {Carte} from './classes/Carte.js';
 
 let carte = new Carte();
 const TILE_SIZE = 256;
-let numResto = 0;
-let numIdCollapse = 0;
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
@@ -20,23 +18,31 @@ function project(latLng) {
   );
 }
 
-function elementCard(nameResto, comment) {
-  let numHeading = 0;
-  let numDataTarget = 0;
-  let numAriaControls = 0;
-  let numAriaLabelldby = 0;
+function displayComment (listComments) {
+  let result = "";
+  listComments.forEach(element => {
+   result += `<strong>${element.stars}</strong><p> ${element.comment} </p>`;
+  });
+
+  return result;
+ }
+
+function elementCard(numResto, nameResto, listP) {
+  console.log("numresto : " , numResto);
+  console.log("nameresto : ", nameResto);
+  console.log("comment : " , listP);
+
   let card = `<div class="card">
-                <div id="${numHeading++}">
+                <div id="${numResto}">
                   <h5 class="mb-0">
-                    <button id="resto-${numResto++}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-${numDataTarget++}" aria-expanded="true" aria-controls="collapse-${numAriaControls++}">
-                      ${nameResto}
+                    <button id="resto-${nameResto}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-${nameResto}" aria-expanded="true" aria-controls="collapse-${nameResto}">
                     </button>
                   </h5>
                 </div>
 
-                <div id="collapse-${numIdCollapse++}" class="collapse show" aria-labelledby="${numAriaLabelldby++}" data-parent="#accordion">
+                <div id="collapse-${nameResto}" class="collapse show" aria-labelledby="${nameResto}" data-parent="#accordion">
                   <div class="card-body">
-                    ${comment}
+                    ${displayComment(listP)}
                   </div>
                 </div>
               </div>`;
@@ -71,7 +77,7 @@ var marker = new google.maps.Marker({
     .then((result) => {
       restos = result;
       // Nous parcourons la liste des villes
-      restos.forEach((resto) => {
+      restos.forEach((resto, ind) => {
         var marker = new google.maps.Marker({
           // A chaque boucle, la latitude et la longitude sont lues dans le tableau
           position: {
@@ -83,22 +89,18 @@ var marker = new google.maps.Marker({
           map: carte.map,
         });
         //displayResto(1,5);
-        resto.ratings.forEach(element => {
-          console.log(elementCard(resto.name, element.comment));
-          let idAccordion = document.getElementById("accordion");
-          console.log(idResto);
-          console.log(idComment);
-          idAccordion.innerHTML = elementCard(idResto.innerHTML = resto.name, idComment.innerHTML = element.comment);
-          let idResto = document.getElementById(`resto-1`);
-          let idComment = document.getElementById(`collapse-1`);
 
-        });
+        let idAccordion = document.getElementById("accordion");
+        idAccordion.innerHTML += elementCard(ind, resto.name, resto.ratings);
+        let idResto = document.getElementById(`resto-${resto.name}`);
+        idResto.innerHTML = resto.name;
+
         
 
         
         
         
-      })
+      });
     })
   /*}*/
 };
