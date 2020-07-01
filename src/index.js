@@ -28,10 +28,6 @@ function displayComment (listComments) {
  }
 
 function elementCard(numResto, nameResto, listP) {
-  console.log("numresto : " , numResto);
-  console.log("nameresto : ", nameResto);
-  console.log("comment : " , listP);
-
   let card = `<div class="card">
                 <div id="${numResto}">
                   <h5 class="mb-0">
