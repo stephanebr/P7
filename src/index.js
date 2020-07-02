@@ -1,12 +1,12 @@
-import {Carte} from './classes/Carte.js';
+import {Map} from './classes/Map.js';
 
-let carte = new Carte();
+let map = new Map();
 const TILE_SIZE = 256;
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
 function project(latLng) {
-  var siny = Math.sin((latLng.lat() * Math.PI) / 180);
+  let siny = Math.sin((latLng.lat() * Math.PI) / 180);
 
   // Truncating to 0.9999 effectively limits latitude to 89.189. This is
   // about a third of a tile past the edge of the world tile.
@@ -36,7 +36,7 @@ function elementCard(numResto, nameResto, listP) {
                   </h5>
                 </div>
 
-                <div id="collapse-${nameResto}" class="collapse show" aria-labelledby="${nameResto}" data-parent="#accordion">
+                <div id="collapse-${nameResto}" class="collapse hidden" aria-labelledby="${nameResto}" data-parent="#accordion">
                   <div class="card-body">
                     ${displayComment(listP)}
                   </div>
@@ -47,24 +47,9 @@ function elementCard(numResto, nameResto, listP) {
 
 window.onload = function () {
   // Fonction d'initialisation qui s'exécute lorsque le DOM est chargé
-  carte.initMap();
+  map.initMap();
   
   let restos = [];
-  
-  //let resto = d.namer
-
-
-var icon = {
-        url: './icons/adresse.png', // url
-        scaledSize: new google.maps.Size(30, 30), // scaled size
-       };
-
-var iconBase = './icons/adresse.png';
-var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(carte.monAdresse.lat, carte.monAdresse.lon),
-          map: carte.map,
-          icon: icon
-        });
 
   fetch("restaurants.json")
     .then(function (data) {
@@ -72,9 +57,10 @@ var marker = new google.maps.Marker({
     })
     .then((result) => {
       restos = result;
+      let listMarkers = [];
       // Nous parcourons la liste des villes
       restos.forEach((resto, ind) => {
-        var marker = new google.maps.Marker({
+        let marker = new google.maps.Marker({
           // A chaque boucle, la latitude et la longitude sont lues dans le tableau
           position: {
             lat: resto.lat,
@@ -82,21 +68,22 @@ var marker = new google.maps.Marker({
           },
           // On en profite pour ajouter une info-bulle contenant le nom de la ville
           title: resto.name,
-          map: carte.map,
+          map: map.map,
         });
+        listMarkers.push(marker);
         //displayResto(1,5);
+
 
         let idAccordion = document.getElementById("accordion");
         idAccordion.innerHTML += elementCard(ind, resto.name, resto.ratings);
         let idResto = document.getElementById(`resto-${resto.name}`);
         idResto.innerHTML = resto.name;
 
-        
+        //map.getBounds().contains(listMarkers.getPosition());
 
-        
-        
-        
       });
+      
+      map.idleMarker(listMarkers);
     })
   /*}*/
 };
