@@ -25,7 +25,7 @@ function displayComment (listComments) {
   });
 
   return result;
- }
+}
 
 function elementCard(numResto, nameResto, listP) {
   let card = `<div class="card">
@@ -64,12 +64,13 @@ window.onload = function () {
           // A chaque boucle, la latitude et la longitude sont lues dans le tableau
           position: {
             lat: resto.lat,
-            lng: resto.lng,
+            lng: resto.lng
           },
           // On en profite pour ajouter une info-bulle contenant le nom de la ville
           title: resto.name,
-          map: map.map,
+          map: map.map
         });
+
         listMarkers.push(marker);
         //displayResto(1,5);
 
@@ -78,27 +79,33 @@ window.onload = function () {
         idAccordion.innerHTML += elementCard(ind, resto.name, resto.ratings);
         let idResto = document.getElementById(`resto-${resto.name}`);
         idResto.innerHTML = resto.name;
-
-        //map.getBounds().contains(listMarkers.getPosition());
-
-      });
+       });
       
       map.idleMarker(listMarkers);
-    })
-  /*}*/
-};
+    });
+}
 
 /*displayResto(min, max) {
-  foreach resto 
-    if resto.rating < min || resto.rating > max
-      if let elem = document.getElementById(resto.name) {
-        elem.display none
-      }
-      
-} else {
-  if let elem = document.getElementById(resto.nme)
-  if elem is undefined
-  createElement ....... 
-}*/
+  let listRestos = [];
 
-//}
+  listRestos.forEach((elementResto, index) => {
+    if(elementResto.rating < min || elementResto.rating > max) {
+      let elem = document.getElementById(elementResto.name);
+      
+      if(elem) {
+        elem.display = 'none';
+      }
+    } else {
+      let elem = document.getElementById(elementResto.name);
+
+      if(elem) {
+        if(elem === undefined) {
+          let idAccordion = document.getElementById("accordion");
+          idAccordion.innerHTML += elementCard(index, listRestos.name, listRestos.ratings);
+          let idResto = document.getElementById(`resto-${listRestos.name}`);
+          idResto.innerHTML = listRestos.name;            
+        }      
+      }
+    }      
+  });      
+}*/

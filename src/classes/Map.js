@@ -51,10 +51,10 @@ class Map {
                 console.log(that.map.getBounds().contains(elementMarker.getPosition()) + " " + elementMarker.title);
 
                 if(that.map.getBounds().contains(elementMarker.getPosition()) === false) {
-                    document.getElementById(`resto-${elementMarker.title}`).className = "card";
-                    ocument.getElementById(`resto-${elementMarker.title}`).className = `mb-${index}`;
-                    //document.getElementById(`collapse-${elementMarker.title}`).style.display='none';
-                } 
+                    document.querySelector(`div.card #resto-${elementMarker.title}`).style.display = 'none';
+                } else {
+                    document.querySelector(`div.card #resto-${elementMarker.title}`).style.display = 'block';
+                }
             });
           });
     }
