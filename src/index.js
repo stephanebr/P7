@@ -44,12 +44,11 @@ function elementCard(numResto, nameResto, listP) {
               </div>`;
   return card;
 }
+var restos = []
 
 window.onload = function () {
   // Fonction d'initialisation qui s'exécute lorsque le DOM est chargé
   map.initMap();
-  
-  let restos = [];
 
   fetch("restaurants.json")
     .then(function (data) {
@@ -72,40 +71,46 @@ window.onload = function () {
         });
 
         listMarkers.push(marker);
-        //displayResto(1,5);
 
-
-        let idAccordion = document.getElementById("accordion");
+        /*let idAccordion = document.getElementById("accordion");
         idAccordion.innerHTML += elementCard(ind, resto.name, resto.ratings);
         let idResto = document.getElementById(`resto-${resto.name}`);
-        idResto.innerHTML = resto.name;
+        idResto.innerHTML = resto.name;*/
        });
+
+       displayResto(restos, 1,5);
       
       map.idleMarker(listMarkers);
     });
 }
 
-/*displayResto(min, max) {
-  let listRestos = [];
+document.getElementById("min").addEventListener("input", function(e){
+  if(e.target.value < 5 && e.target.value > 0) {
+    displayResto(restos, parseInt(e.target.value), 5);
+  }
+});
 
+// Au changement de valeur de l'input
+// Appeler displayResto en changeant le min
+function displayResto(listRestos, min, max) {
   listRestos.forEach((elementResto, index) => {
+    console.log(elementResto)
     if(elementResto.rating < min || elementResto.rating > max) {
+      console.log("ok cond")
       let elem = document.getElementById(elementResto.name);
-      
+      console.log(elem)
       if(elem) {
+        console.log("ok cond 2")
         elem.display = 'none';
       }
     } else {
-      let elem = document.getElementById(elementResto.name);
-
-      if(elem) {
-        if(elem === undefined) {
+        let elem = document.getElementById(elementResto.name);
+        if(elem === null) {
           let idAccordion = document.getElementById("accordion");
-          idAccordion.innerHTML += elementCard(index, listRestos.name, listRestos.ratings);
-          let idResto = document.getElementById(`resto-${listRestos.name}`);
-          idResto.innerHTML = listRestos.name;            
+          idAccordion.innerHTML += elementCard(index, elementResto.name, elementResto.ratings);
+          let idResto = document.getElementById(`resto-${elementResto.name}`);
+          idResto.innerHTML = elementResto.name;            
         }      
-      }
-    }      
+      } 
   });      
-}*/
+}

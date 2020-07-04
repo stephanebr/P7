@@ -26,7 +26,7 @@ class Map {
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             // Nous activons les options de contrôle de la carte (plan, satellite...)
             mapTypeControl: true,
-            // Nous désactivons la roulette de souris
+            // Nous activons la roulette de souris
             scrollwheel: true,
             mapTypeControlOptions: {
             // Cette option sert à définir comment les options se placent
@@ -51,9 +51,15 @@ class Map {
                 console.log(that.map.getBounds().contains(elementMarker.getPosition()) + " " + elementMarker.title);
 
                 if(that.map.getBounds().contains(elementMarker.getPosition()) === false) {
-                    document.querySelector(`div.card #resto-${elementMarker.title}`).style.display = 'none';
+                    let resto = 
+                    document.querySelector(`div.card #resto-${elementMarker.title}`);
+                    resto.parentElement.parentElement.parentElement.style.display = 'none';
+                    resto.style.display = 'none';
                 } else {
-                    document.querySelector(`div.card #resto-${elementMarker.title}`).style.display = 'block';
+                    let restoVisible = 
+                    document.querySelector(`div.card #resto-${elementMarker.title}`);
+                    restoVisible.parentElement.parentElement.parentElement.style.display = 'block'
+                    restoVisible.style.display = 'block';
                 }
             });
           });
