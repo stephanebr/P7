@@ -19,6 +19,7 @@ function project(latLng) {
 }
 
 function displayComment (listComments) {
+  console.log("ListeComments : ", listComments)
   let result = "";
   listComments.forEach(element => {
    result += `<strong>${element.stars}</strong><p> ${element.comment} </p>`;
@@ -44,8 +45,8 @@ function elementCard(numResto, nameResto, listP) {
               </div>`;
   return card;
 }
-var restos = []
 
+let restos = [];
 window.onload = function () {
   // Fonction d'initialisation qui s'exécute lorsque le DOM est chargé
   map.initMap();
@@ -59,6 +60,11 @@ window.onload = function () {
       let listMarkers = [];
       // Nous parcourons la liste des villes
       restos.forEach((resto, ind) => {
+        // let average = 0;
+        // for each ratings, put star value into average var
+        // After for, average /= resto.ratings.length
+        // resto.reating = average;
+
         let marker = new google.maps.Marker({
           // A chaque boucle, la latitude et la longitude sont lues dans le tableau
           position: {
@@ -78,9 +84,12 @@ window.onload = function () {
         idResto.innerHTML = resto.name;*/
        });
 
+       //moyenne(restos.ratings);
        displayResto(restos, 1,5);
+
+       console.log(moyenne(restos));
       
-      map.idleMarker(listMarkers);
+       map.idleMarker(listMarkers);
     });
 }
 
@@ -106,6 +115,7 @@ function displayResto(listRestos, min, max) {
     } else {
         let elem = document.getElementById(elementResto.name);
         if(elem === null) {
+          console.log("Resultat :", elementResto);
           let idAccordion = document.getElementById("accordion");
           idAccordion.innerHTML += elementCard(index, elementResto.name, elementResto.ratings);
           let idResto = document.getElementById(`resto-${elementResto.name}`);
@@ -113,4 +123,32 @@ function displayResto(listRestos, min, max) {
         }      
       } 
   });      
+}
+
+function moyenne(listRestos) {  
+  // let average = 0;
+  // let listeStars = [];
+
+  // listRestos.forEach(star => {
+  //   listeStars.push(star.ratings);
+  //   listeStars.forEach(elementStar => {
+  //     console.log("elementStar: ", elementStar);
+  //     average += Number(elementStar);
+  //     console.log("average : ", average);
+  //     average /= elementStar.length;
+  //     console.log("average: ", average);
+  //   });
+    
+  //   //listRestos.ratings = average / Number(star.stars);
+  //   console.log("result average: ", average);            
+  // });
+
+  const moyennes = listRestos.map((resto) => {
+    const listStars = resto.ratings.map((ratings) => ratings.stars);
+    const sumStars = listStars.reduce((acc, val) => acc + val);
+    
+    return sumStars / listStars.length;
+  });
+
+  return moyennes;
 }
