@@ -2,6 +2,7 @@ import {Map} from './classes/Map.js';
 
 let map = new Map();
 const TILE_SIZE = 256;
+let list = [];
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
@@ -19,7 +20,6 @@ function project(latLng) {
 }
 
 function displayComment (listComments) {
-  console.log("ListeComments : ", listComments)
   let result = "";
   listComments.forEach(element => {
    result += `<strong>${element.stars}</strong><p> ${element.comment} </p>`;
@@ -57,14 +57,10 @@ window.onload = function () {
     })
     .then((result) => {
       restos = result;
+      list = addAverage(restos);
       let listMarkers = [];
       // Nous parcourons la liste des villes
       restos.forEach((resto, ind) => {
-        // let average = 0;
-        // for each ratings, put star value into average var
-        // After for, average /= resto.ratings.length
-        // resto.reating = average;
-
         let marker = new google.maps.Marker({
           // A chaque boucle, la latitude et la longitude sont lues dans le tableau
           position: {
@@ -77,78 +73,43 @@ window.onload = function () {
         });
 
         listMarkers.push(marker);
-
-        /*let idAccordion = document.getElementById("accordion");
-        idAccordion.innerHTML += elementCard(ind, resto.name, resto.ratings);
-        let idResto = document.getElementById(`resto-${resto.name}`);
-        idResto.innerHTML = resto.name;*/
        });
 
-       //moyenne(restos.ratings);
-       displayResto(restos, 1,5);
-
-       console.log(moyenne(restos));
+       displayResto(filterResto(list, 1, 5));
       
        map.idleMarker(listMarkers);
     });
 }
 
 document.getElementById("min").addEventListener("input", function(e){
-  if(e.target.value < 5 && e.target.value > 0) {
-    displayResto(restos, parseInt(e.target.value), 5);
+  if(Number(e.target.value) <= 5 && Number(e.target.value) > 0) {
+    displayResto(filterResto(list, Number(e.target.value), 5));
   }
 });
 
 // Au changement de valeur de l'input
 // Appeler displayResto en changeant le min
-function displayResto(listRestos, min, max) {
-  listRestos.forEach((elementResto, index) => {
-    console.log(elementResto)
-    if(elementResto.rating < min || elementResto.rating > max) {
-      console.log("ok cond")
-      let elem = document.getElementById(elementResto.name);
-      console.log(elem)
-      if(elem) {
-        console.log("ok cond 2")
-        elem.display = 'none';
-      }
-    } else {
-        let elem = document.getElementById(elementResto.name);
-        if(elem === null) {
-          console.log("Resultat :", elementResto);
-          let idAccordion = document.getElementById("accordion");
-          idAccordion.innerHTML += elementCard(index, elementResto.name, elementResto.ratings);
-          let idResto = document.getElementById(`resto-${elementResto.name}`);
-          idResto.innerHTML = elementResto.name;            
-        }      
-      } 
-  });      
+function displayResto(listRestos) {
+  let idAccordion = document.getElementById("accordion");
+  idAccordion.innerHTML = "";
+  listRestos.forEach((resto, index) => {
+    idAccordion.innerHTML += elementCard(index, resto.name, resto.ratings);
+    let idResto = document.getElementById(`resto-${resto.name}`);
+    idResto.innerHTML = resto.name;    
+  });
 }
 
-function moyenne(listRestos) {  
-  // let average = 0;
-  // let listeStars = [];
-
-  // listRestos.forEach(star => {
-  //   listeStars.push(star.ratings);
-  //   listeStars.forEach(elementStar => {
-  //     console.log("elementStar: ", elementStar);
-  //     average += Number(elementStar);
-  //     console.log("average : ", average);
-  //     average /= elementStar.length;
-  //     console.log("average: ", average);
-  //   });
-    
-  //   //listRestos.ratings = average / Number(star.stars);
-  //   console.log("result average: ", average);            
-  // });
-
-  const moyennes = listRestos.map((resto) => {
+function addAverage(listRestos) {  
+  const averages = listRestos.map((resto) => {
     const listStars = resto.ratings.map((ratings) => ratings.stars);
     const sumStars = listStars.reduce((acc, val) => acc + val);
     
-    return sumStars / listStars.length;
+    return {...resto, average:sumStars / listStars.length};
   });
 
-  return moyennes;
+  return averages;
+}
+
+function filterResto(listResto, min, max) {
+  return listResto.filter(resto => resto.average >= min && resto.average <= max);
 }
