@@ -3,6 +3,8 @@ import {Map} from './classes/Map.js';
 let map = new Map();
 const TILE_SIZE = 256;
 let list = [];
+let restos = [];
+let listMarkers = [];
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
@@ -46,7 +48,6 @@ function elementCard(numResto, nameResto, listP) {
   return card;
 }
 
-let restos = [];
 window.onload = function () {
   // Fonction d'initialisation qui s'exécute lorsque le DOM est chargé
   map.initMap();
@@ -58,9 +59,8 @@ window.onload = function () {
     .then((result) => {
       restos = result;
       list = addAverage(restos);
-      let listMarkers = [];
       // Nous parcourons la liste des villes
-      restos.forEach((resto, ind) => {
+      list.forEach((resto, ind) => {
         let marker = new google.maps.Marker({
           // A chaque boucle, la latitude et la longitude sont lues dans le tableau
           position: {
@@ -69,7 +69,8 @@ window.onload = function () {
           },
           // On en profite pour ajouter une info-bulle contenant le nom de la ville
           title: resto.name,
-          map: map.map
+          map: map.map,
+          average: resto.average
         });
 
         listMarkers.push(marker);
@@ -77,13 +78,17 @@ window.onload = function () {
 
        displayResto(filterResto(list, 1, 5));
       
-       map.idleMarker(listMarkers);
+       //map.idleMarker(listMarkers);
+       displayMarker(listMarkers);
+
+       console.log(idleFilterMarker(listMarkers, 1, 5));
     });
 }
 
 document.getElementById("min").addEventListener("input", function(e){
   if(Number(e.target.value) <= 5 && Number(e.target.value) > 0) {
     displayResto(filterResto(list, Number(e.target.value), 5));
+    displayMarker(idleFilterMarker(listMarkers, Number(e.target.value), 5));
   }
 });
 
@@ -112,4 +117,17 @@ function addAverage(listRestos) {
 
 function filterResto(listResto, min, max) {
   return listResto.filter(resto => resto.average >= min && resto.average <= max);
+}
+
+function displayMarker(listMarkers) {
+  map.map.addListener("idle", function() {
+    listMarkers.forEach((elementMarker, index) => {
+        map.map.getBounds().contains(elementMarker.getPosition());
+        console.log(map.map.getBounds().contains(elementMarker.getPosition()) + " " + elementMarker.title + " " + elementMarker.average);
+    });
+  });
+}
+
+function idleFilterMarker(listMarker, min, max) {
+  return listMarker.filter(marker => marker.average >= min && marker.average <= max);
 }

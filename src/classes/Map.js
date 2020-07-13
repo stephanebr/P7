@@ -43,7 +43,7 @@ class Map {
         this.locationMyPosition();
     }
 
-    idleMarker(listMarkers) {
+    /*idleMarker(listMarkers) {
         let that = this;
         that.map.addListener("idle", function() {
             listMarkers.forEach((elementMarker, index) => {
@@ -63,7 +63,7 @@ class Map {
                 }
             });
           });
-    }
+    }*/
     
 
     handleLocationError(browserHasGeolocation, infoWindow, pos) {
