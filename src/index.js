@@ -2,9 +2,6 @@ import {Map} from './classes/Map.js';
 
 let map = new Map();
 const TILE_SIZE = 256;
-let list = [];
-let restos = [];
-let listMarkers = [];
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
@@ -57,10 +54,10 @@ window.onload = function () {
       return data.json();
     })
     .then((result) => {
-      restos = result;
-      list = addAverage(restos);
+      map.restos = result;
+      map.list = map.addAverage(map.restos);
       // Nous parcourons la liste des villes
-      list.forEach((resto, ind) => {
+      map.list.forEach((resto, ind) => {
         let marker = new google.maps.Marker({
           // A chaque boucle, la latitude et la longitude sont lues dans le tableau
           position: {
@@ -70,25 +67,27 @@ window.onload = function () {
           // On en profite pour ajouter une info-bulle contenant le nom de la ville
           title: resto.name,
           map: map.map,
-          average: resto.average
         });
 
-        listMarkers.push(marker);
+        map.listMarkers.push(marker);
        });
 
-       displayResto(filterResto(list, 1, 5));
+       displayResto(map.filterStar(map.list, 1, 5));
       
        //map.idleMarker(listMarkers);
-       displayMarker(listMarkers);
+       //displayMarker(map.listMarkers);
 
-       console.log(idleFilterMarker(listMarkers, 1, 5));
+       //map.filterMarker(map.list, map.listMarkers);
+
+       //console.log(idleFilterMarker(map.listMarkers, 1, 5));
     });
 }
 
 document.getElementById("min").addEventListener("input", function(e){
   if(Number(e.target.value) <= 5 && Number(e.target.value) > 0) {
-    displayResto(filterResto(list, Number(e.target.value), 5));
-    displayMarker(idleFilterMarker(listMarkers, Number(e.target.value), 5));
+    displayResto(map.filterStar(map.list, Number(e.target.value), 5));
+    //displayMarker(idleFilterMarker(map.listMarkers, Number(e.target.value), 5));
+    map.filterMarker(map.list, map.listMarkers);
   }
 });
 
@@ -102,21 +101,6 @@ function displayResto(listRestos) {
     let idResto = document.getElementById(`resto-${resto.name}`);
     idResto.innerHTML = resto.name;    
   });
-}
-
-function addAverage(listRestos) {  
-  const averages = listRestos.map((resto) => {
-    const listStars = resto.ratings.map((ratings) => ratings.stars);
-    const sumStars = listStars.reduce((acc, val) => acc + val);
-    
-    return {...resto, average:sumStars / listStars.length};
-  });
-
-  return averages;
-}
-
-function filterResto(listResto, min, max) {
-  return listResto.filter(resto => resto.average >= min && resto.average <= max);
 }
 
 function displayMarker(listMarkers) {

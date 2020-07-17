@@ -9,6 +9,9 @@ class Map {
 
         this.map = null;
         this.infoWindow = null;
+        this.list = [];
+        this.restos = [];
+        this.listMarkers = [];
     }
   
     // Fonction d'initialisation de la carte
@@ -112,6 +115,38 @@ class Map {
         }
 
     }    
+
+    addAverage(listRestos) {  
+        const averages = listRestos.map((resto) => {
+        const listStars = resto.ratings.map((ratings) => ratings.stars);
+        const sumStars = listStars.reduce((acc, val) => acc + val);
+        
+        return {...resto, average:sumStars / listStars.length};
+        });
+    
+        return averages;
+    }
+
+    filterStar(listResto, min, max) {
+        return listResto.filter(resto => resto.average >= min && resto.average <= max);
+    }
+
+    filterMarker(listRestos, listMarkers) {
+        let visible = true;
+        listRestos.forEach(resto => {
+            listMarkers.forEach(marker => {
+                console.log(marker);
+               if(marker.title === resto.name) {
+                   console.log(visible);
+                   return marker.setVisible(visible);
+               } else {
+                   visible = false;
+                   return marker.setVisible(visible);
+               }
+            });
+            
+        });
+    }
 }
 
 export {Map};
