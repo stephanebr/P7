@@ -132,19 +132,16 @@ class Map {
     }
 
     filterMarker(listRestos, listMarkers) {
-        let visible = true;
+        let isVisible = false;
         listRestos.forEach(resto => {
             listMarkers.forEach(marker => {
-                console.log(marker);
                if(marker.title === resto.name) {
-                   console.log(visible);
-                   return marker.setVisible(visible);
-               } else {
-                   visible = false;
-                   return marker.setVisible(visible);
+                   console.log(marker.title);
+                   console.log(resto.name);
+                   isVisible = true;
                }
-            });
-            
+               return marker.setVisible(isVisible);
+            });            
         });
     }
 }

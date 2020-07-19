@@ -73,20 +73,13 @@ window.onload = function () {
        });
 
        displayResto(map.filterStar(map.list, 1, 5));
-      
-       //map.idleMarker(listMarkers);
-       //displayMarker(map.listMarkers);
-
-       //map.filterMarker(map.list, map.listMarkers);
-
-       //console.log(idleFilterMarker(map.listMarkers, 1, 5));
+       map.filterMarker(map.list, map.listMarkers);      
     });
 }
 
 document.getElementById("min").addEventListener("input", function(e){
   if(Number(e.target.value) <= 5 && Number(e.target.value) > 0) {
     displayResto(map.filterStar(map.list, Number(e.target.value), 5));
-    //displayMarker(idleFilterMarker(map.listMarkers, Number(e.target.value), 5));
     map.filterMarker(map.list, map.listMarkers);
   }
 });
@@ -101,17 +94,4 @@ function displayResto(listRestos) {
     let idResto = document.getElementById(`resto-${resto.name}`);
     idResto.innerHTML = resto.name;    
   });
-}
-
-function displayMarker(listMarkers) {
-  map.map.addListener("idle", function() {
-    listMarkers.forEach((elementMarker, index) => {
-        map.map.getBounds().contains(elementMarker.getPosition());
-        console.log(map.map.getBounds().contains(elementMarker.getPosition()) + " " + elementMarker.title + " " + elementMarker.average);
-    });
-  });
-}
-
-function idleFilterMarker(listMarker, min, max) {
-  return listMarker.filter(marker => marker.average >= min && marker.average <= max);
 }
