@@ -12,6 +12,7 @@ class Map {
         this.list = [];
         this.restos = [];
         this.listMarkers = [];
+        this.restosFilter = [];
     }
   
     // Fonction d'initialisation de la carte
@@ -46,27 +47,14 @@ class Map {
         this.locationMyPosition();
     }
 
-    /*idleMarker(listMarkers) {
+    idleMarker(listMarkers) {
         let that = this;
         that.map.addListener("idle", function() {
-            listMarkers.forEach((elementMarker, index) => {
-                that.map.getBounds().contains(elementMarker.getPosition());
-                console.log(that.map.getBounds().contains(elementMarker.getPosition()) + " " + elementMarker.title);
-
-                if(that.map.getBounds().contains(elementMarker.getPosition()) === false) {
-                    let resto = 
-                    document.querySelector(`div.card #resto-${elementMarker.title}`);
-                    resto.parentElement.parentElement.parentElement.style.display = 'none';
-                    resto.style.display = 'none';
-                } else {
-                    let restoVisible = 
-                    document.querySelector(`div.card #resto-${elementMarker.title}`);
-                    restoVisible.parentElement.parentElement.parentElement.style.display = 'block'
-                    restoVisible.style.display = 'block';
-                }
+            const visibleMarkers = listMarkers.filter(function(marker) {
+                return that.map.getBounds().contains(marker.getPosition()) === true;
             });
           });
-    }*/
+    }
     
 
     handleLocationError(browserHasGeolocation, infoWindow, pos) {
@@ -132,16 +120,16 @@ class Map {
     }
 
     filterMarker(listRestos, listMarkers) {
-        let isVisible = false;
-        listRestos.forEach(resto => {
-            listMarkers.forEach(marker => {
+        listMarkers.forEach(marker => {
+            let isVisible = false;
+            listRestos.forEach(resto => {
                if(marker.title === resto.name) {
                    console.log(marker.title);
                    console.log(resto.name);
                    isVisible = true;
                }
-               return marker.setVisible(isVisible);
-            });            
+            });    
+            marker.setVisible(isVisible);        
         });
     }
 }

@@ -72,15 +72,18 @@ window.onload = function () {
         map.listMarkers.push(marker);
        });
 
-       displayResto(map.filterStar(map.list, 1, 5));
-       map.filterMarker(map.list, map.listMarkers);      
+
+      map.restosFilter = map.filterStar(map.list, 1, 5);
+      displayResto(map.restosFilter);
+      map.filterMarker(map.restosFilter, map.listMarkers);
     });
 }
 
 document.getElementById("min").addEventListener("input", function(e){
   if(Number(e.target.value) <= 5 && Number(e.target.value) > 0) {
-    displayResto(map.filterStar(map.list, Number(e.target.value), 5));
-    map.filterMarker(map.list, map.listMarkers);
+    map.restosFilter = map.filterStar(map.list, Number(e.target.value), 5);
+    displayResto(map.restosFilter);
+    map.filterMarker(map.restosFilter, map.listMarkers);
   }
 });
 
