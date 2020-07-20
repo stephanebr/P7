@@ -80,8 +80,16 @@ window.onload = function () {
 }
 
 document.getElementById("min").addEventListener("input", function(e){
-  if(Number(e.target.value) <= 5 && Number(e.target.value) > 0) {
-    map.restosFilter = map.filterStar(map.list, Number(e.target.value), 5);
+  if(Number(e.target.value) <= Number(document.getElementById("max").value) && Number(e.target.value) >= 0) {
+    map.restosFilter = map.filterStar(map.list, Number(e.target.value), Number(document.getElementById("max").value));
+    displayResto(map.restosFilter);
+    map.filterMarker(map.restosFilter, map.listMarkers);
+  }
+});
+
+document.getElementById("max").addEventListener("input", function(e) {
+  if(Number(e.target.value) <= 5 && Number(e.target.value) > Number(document.getElementById("min").value)) {
+    map.restosFilter = map.filterStar(map.list, Number(document.getElementById("min").value), Number(e.target.value));
     displayResto(map.restosFilter);
     map.filterMarker(map.restosFilter, map.listMarkers);
   }

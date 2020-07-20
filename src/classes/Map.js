@@ -47,14 +47,18 @@ class Map {
         this.locationMyPosition();
     }
 
-    idleMarker(listMarkers) {
+    idleFilterMarker(listMarkers) {
         let that = this;
         that.map.addListener("idle", function() {
             const visibleMarkers = listMarkers.filter(function(marker) {
-                return that.map.getBounds().contains(marker.getPosition()) === true;
+                return that.map.getBounds().contains(marker.getPosition());
             });
           });
     }
+
+
+
+
     
 
     handleLocationError(browserHasGeolocation, infoWindow, pos) {
