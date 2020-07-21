@@ -10,7 +10,6 @@ class Map {
         this.map = null;
         this.infoWindow = null;
         this.list = [];
-        this.restos = [];
         this.listMarkers = [];
         this.restosFilter = [];
     }

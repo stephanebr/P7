@@ -54,8 +54,7 @@ window.onload = function () {
       return data.json();
     })
     .then((result) => {
-      map.restos = result;
-      map.list = map.addAverage(map.restos);
+      map.list = map.addAverage(result);
       // Nous parcourons la liste des villes
       map.list.forEach((resto, ind) => {
         let marker = new google.maps.Marker({
@@ -76,22 +75,68 @@ window.onload = function () {
       map.restosFilter = map.filterStar(map.list, 1, 5);
       displayResto(map.restosFilter);
       map.filterMarker(map.restosFilter, map.listMarkers);
+
+      //test
+
+      map.map.addListener("idle", function() {
+        const visibleMarkers = map.listMarkers.filter(function(marker) {
+            return map.map.getBounds().contains(marker.getPosition());
+        }); 
+
+        let restoVisible = [];
+        visibleMarkers.forEach(marker => {
+          map.restosFilter.forEach(resto => {
+             if(marker.title === resto.name) {
+                 restoVisible.push(resto);
+             }
+          });       
+        });
+
+        displayResto(restoVisible);
+      });
     });
 }
 
 document.getElementById("min").addEventListener("input", function(e){
   if(Number(e.target.value) <= Number(document.getElementById("max").value) && Number(e.target.value) >= 0) {
     map.restosFilter = map.filterStar(map.list, Number(e.target.value), Number(document.getElementById("max").value));
-    displayResto(map.restosFilter);
+    // displayResto(map.restosFilter);
     map.filterMarker(map.restosFilter, map.listMarkers);
+    const visibleMarkers = map.listMarkers.filter(function(marker) {
+      return map.map.getBounds().contains(marker.getPosition());
+  }); 
+
+  let restoVisible = [];
+  visibleMarkers.forEach(marker => {
+    map.restosFilter.forEach(resto => {
+       if(marker.title === resto.name) {
+           restoVisible.push(resto);
+       }
+    });       
+  });
+
+  displayResto(restoVisible);
   }
 });
 
 document.getElementById("max").addEventListener("input", function(e) {
   if(Number(e.target.value) <= 5 && Number(e.target.value) > Number(document.getElementById("min").value)) {
     map.restosFilter = map.filterStar(map.list, Number(document.getElementById("min").value), Number(e.target.value));
-    displayResto(map.restosFilter);
     map.filterMarker(map.restosFilter, map.listMarkers);
+    const visibleMarkers = map.listMarkers.filter(function(marker) {
+      return map.map.getBounds().contains(marker.getPosition());
+  }); 
+
+  let restoVisible = [];
+  visibleMarkers.forEach(marker => {
+    map.restosFilter.forEach(resto => {
+       if(marker.title === resto.name) {
+           restoVisible.push(resto);
+       }
+    });       
+  });
+
+  displayResto(restoVisible);
   }
 });
 
