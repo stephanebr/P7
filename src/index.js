@@ -1,7 +1,9 @@
 import {Map} from './classes/Map.js';
+import {KEY} from '../key.js';
 
 let map = new Map();
 const TILE_SIZE = 256;
+let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=47.5763831,-122.4211769&fov=80&heading=70&pitch=0&key=${KEY}"/>`;
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
@@ -39,6 +41,7 @@ function elementCard(numResto, nameResto, listP) {
                 <div id="collapse-${nameResto}" class="collapse hidden" aria-labelledby="${nameResto}" data-parent="#accordion">
                   <div class="card-body">
                     ${displayComment(listP)}
+                    ${img}
                   </div>
                 </div>
               </div>`;
