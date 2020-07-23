@@ -3,7 +3,6 @@ import {KEY} from '../key.js';
 
 let map = new Map();
 const TILE_SIZE = 256;
-let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=48.789581,2.425551&fov=80&heading=70&pitch=0&key=${KEY}"/>`;
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
@@ -29,7 +28,9 @@ function displayComment (listComments) {
   return result;
 }
 
-function elementCard(numResto, nameResto, listP) {
+function elementCard(numResto, nameResto, listP, latitude, longitude) {
+  let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${latitude},${longitude}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;
+
   let card = `<div class="card">
                 <div id="${numResto}">
                   <h5 class="mb-0">
@@ -41,7 +42,7 @@ function elementCard(numResto, nameResto, listP) {
                 <div id="collapse-${nameResto}" class="collapse hidden" aria-labelledby="${nameResto}" data-parent="#accordion">
                   <div class="card-body">
                     ${displayComment(listP)}
-                    <p id="notice"></p>
+                    <p id="notice-${numResto}"></p>
                     ${img}
                     <button id="btn-add-${numResto}">Ajouter un avis</button>
                   </div>
@@ -80,7 +81,6 @@ window.onload = function () {
       map.restosFilter = map.filterStar(map.list, 1, 5);
       displayResto(map.restosFilter);
       map.filterMarker(map.restosFilter, map.listMarkers);
-      addNotice(map.restosFilter);
 
       //test
 
@@ -98,7 +98,16 @@ window.onload = function () {
           });       
         });
 
+       // map.filterRestoVisible(visibleMarkers);
+
         displayResto(restoVisible);
+        addNotice(restoVisible);
+
+        //Ajout marker
+        google.maps.event.addListener(map.map, 'click', function(event) {
+          placeMarker(event.latLng);
+          addResto(marker.id, marker.title, marker.position);
+       });
 
       });
  
@@ -155,10 +164,9 @@ function addNotice(listRestos) {
     myBtn = document.getElementById(`btn-add-${index}`);
     
     if(myBtn){
-      console.log("dans le if");
       myBtn.addEventListener("click", e => {
-        //document.getElementById("notice").innerHTML = "Test";
-        console.log(`Nombre de clics : ${e.detail}`);
+        let yourNotice = prompt("Saisissez votre avis : ");
+        document.getElementById(`notice-${index}`).innerHTML = yourNotice;
       });
     }
   });
@@ -170,8 +178,40 @@ function displayResto(listRestos) {
   let idAccordion = document.getElementById("accordion");
   idAccordion.innerHTML = "";
   listRestos.forEach((resto, index) => {
-    idAccordion.innerHTML += elementCard(index, resto.name, resto.ratings);
+    idAccordion.innerHTML += elementCard(index, resto.name, resto.ratings, resto.lat, resto.lng);
     let idResto = document.getElementById(`resto-${resto.name}`);
     idResto.innerHTML = resto.name;    
   });
+}
+
+function placeMarker(location) {
+  let id = 0;
+  let marker = new google.maps.Marker({
+      id: id++,
+      position: location,
+      title: prompt("Saisissez le nom du restaurant :"), 
+      map: map.map
+  });
+}
+
+function addResto(id, nameResto, listP = "test", latitude, longitude) {
+  let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${latitude},${longitude}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;
+  let newCard = `<div class="card">
+                  <div id="${id}">
+                  <h5 class="mb-0">
+                    <button id="resto-0${nameResto}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-0${nameResto}" aria-expanded="true" aria-controls="collapse-0${nameResto}">
+                    </button>
+                  </h5>
+                </div>
+
+                  <div id="collapse-0${nameResto}" class="collapse hidden" aria-labelledby="0${nameResto}" data-parent="#accordion">
+                    <div class="card-body">
+                      ${displayComment(listP)}
+                      <p id="notice-0${id}"></p>
+                      ${img}
+                      <button id="btn-add-0${id}">Ajouter un avis</button>
+                    </div>
+                    </div>
+                  </div>`;
+  return newCard;
 }

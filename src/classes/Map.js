@@ -12,6 +12,7 @@ class Map {
         this.list = [];
         this.listMarkers = [];
         this.restosFilter = [];
+        this.restoVisible = [];
     }
   
     // Fonction d'initialisation de la carte
@@ -46,15 +47,6 @@ class Map {
         this.locationMyPosition();
     }
 
-    idleFilterMarker(listMarkers) {
-        let that = this;
-        that.map.addListener("idle", function() {
-            const visibleMarkers = listMarkers.filter(function(marker) {
-                return that.map.getBounds().contains(marker.getPosition());
-            });
-          });
-    }
-
     filterRestoVisible(visibleMarkers) {
         visibleMarkers.forEach(marker => {
             this.restosFilter.forEach(resto => {
@@ -63,12 +55,7 @@ class Map {
                 }
             });       
         });
-    }
-
-
-
-
-    
+    }    
 
     handleLocationError(browserHasGeolocation, infoWindow, pos) {
         infoWindow.setPosition(pos);
