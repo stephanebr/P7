@@ -55,6 +55,16 @@ class Map {
           });
     }
 
+    filterRestoVisible(visibleMarkers) {
+        visibleMarkers.forEach(marker => {
+            this.restosFilter.forEach(resto => {
+                if(marker.title === resto.name) {
+                    this.restoVisible.push(resto);
+                }
+            });       
+        });
+    }
+
 
 
 

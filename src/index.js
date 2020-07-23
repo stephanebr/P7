@@ -3,7 +3,7 @@ import {KEY} from '../key.js';
 
 let map = new Map();
 const TILE_SIZE = 256;
-let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=47.5763831,-122.4211769&fov=80&heading=70&pitch=0&key=${KEY}"/>`;
+let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=48.789581,2.425551&fov=80&heading=70&pitch=0&key=${KEY}"/>`;
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
@@ -41,7 +41,9 @@ function elementCard(numResto, nameResto, listP) {
                 <div id="collapse-${nameResto}" class="collapse hidden" aria-labelledby="${nameResto}" data-parent="#accordion">
                   <div class="card-body">
                     ${displayComment(listP)}
+                    <p id="notice"></p>
                     ${img}
+                    <button id="btn-add-${numResto}">Ajouter un avis</button>
                   </div>
                 </div>
               </div>`;
@@ -78,6 +80,7 @@ window.onload = function () {
       map.restosFilter = map.filterStar(map.list, 1, 5);
       displayResto(map.restosFilter);
       map.filterMarker(map.restosFilter, map.listMarkers);
+      addNotice(map.restosFilter);
 
       //test
 
@@ -96,7 +99,9 @@ window.onload = function () {
         });
 
         displayResto(restoVisible);
+
       });
+ 
     });
 }
 
@@ -109,16 +114,16 @@ document.getElementById("min").addEventListener("input", function(e){
       return map.map.getBounds().contains(marker.getPosition());
   }); 
 
-  let restoVisible = [];
-  visibleMarkers.forEach(marker => {
-    map.restosFilter.forEach(resto => {
-       if(marker.title === resto.name) {
-           restoVisible.push(resto);
-       }
-    });       
-  });
+    let restoVisible = [];
+    visibleMarkers.forEach(marker => {
+      map.restosFilter.forEach(resto => {
+        if(marker.title === resto.name) {
+            restoVisible.push(resto);
+        }
+      });       
+    });
 
-  displayResto(restoVisible);
+    displayResto(restoVisible);
   }
 });
 
@@ -142,6 +147,22 @@ document.getElementById("max").addEventListener("input", function(e) {
   displayResto(restoVisible);
   }
 });
+
+
+function addNotice(listRestos) {
+  let myBtn = "";
+  listRestos.forEach((resto, index) => {
+    myBtn = document.getElementById(`btn-add-${index}`);
+    
+    if(myBtn){
+      console.log("dans le if");
+      myBtn.addEventListener("click", e => {
+        //document.getElementById("notice").innerHTML = "Test";
+        console.log(`Nombre de clics : ${e.detail}`);
+      });
+    }
+  });
+}
 
 // Au changement de valeur de l'input
 // Appeler displayResto en changeant le min
