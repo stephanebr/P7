@@ -124,8 +124,6 @@ class Map {
             let isVisible = false;
             listRestos.forEach(resto => {
                if(marker.title === resto.name) {
-                   console.log(marker.title);
-                   console.log(resto.name);
                    isVisible = true;
                }
             });    

@@ -103,14 +103,16 @@ window.onload = function () {
         displayResto(restoVisible);
         addNotice(restoVisible);
 
-        //Ajout marker
-        google.maps.event.addListener(map.map, 'click', function(event) {
-          placeMarker(event.latLng);
-          addResto(marker.id, marker.title, marker.position);
-       });
+         //Ajout marker
+         map.map.addListener('click', function(event) {
+          let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${event.latLng.lat()},${event.latLng.lng()}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;
+          
+          restoVisible.push(addResto(event.latLng, img));
 
-      });
- 
+          firstNotice(restoVisible);
+        });
+
+      }); 
     });
 }
 
@@ -186,32 +188,60 @@ function displayResto(listRestos) {
 
 function placeMarker(location) {
   let id = 0;
+  let name = prompt("Veuillez saisir le nom du restaurant :");
+
+  while(name === "" || name === null) {
+    name = prompt("Veuillez saisir le nom du restaurant :");
+  }
+  
   let marker = new google.maps.Marker({
       id: id++,
       position: location,
-      title: prompt("Saisissez le nom du restaurant :"), 
+      title: name, 
       map: map.map
   });
+
+  return marker;
 }
 
-function addResto(id, nameResto, listP = "test", latitude, longitude) {
-  let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${latitude},${longitude}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;
+function addResto(location, img) {
+  let idAccordion = document.getElementById("accordion");
+
+  let marker = placeMarker(location);
+    
   let newCard = `<div class="card">
-                  <div id="${id}">
+                  <div id="${marker.id}">
                   <h5 class="mb-0">
-                    <button id="resto-0${nameResto}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-0${nameResto}" aria-expanded="true" aria-controls="collapse-0${nameResto}">
+                    <button id="resto-0${marker.title}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-0${marker.title}" aria-expanded="true" aria-controls="collapse-0${marker.title}">
                     </button>
                   </h5>
                 </div>
 
-                  <div id="collapse-0${nameResto}" class="collapse hidden" aria-labelledby="0${nameResto}" data-parent="#accordion">
+                  <div id="collapse-0${marker.title}" class="collapse hidden" aria-labelledby="0${marker.title}" data-parent="#accordion">
                     <div class="card-body">
-                      ${displayComment(listP)}
-                      <p id="notice-0${id}"></p>
+                      <p id="notice-0${marker.id}"></p>
                       ${img}
-                      <button id="btn-add-0${id}">Ajouter un avis</button>
+                      <button id="btn-add-0${marker.id}">Ajouter un avis</button>
                     </div>
                     </div>
                   </div>`;
-  return newCard;
+
+  idAccordion.innerHTML += newCard;
+  let idResto = document.getElementById(`resto-0${marker.title}`);
+  
+  return idResto.innerHTML = marker.title;
+}
+
+function firstNotice(listRestos) {
+  let myBtn = "";
+  listRestos.forEach((resto, index) => {
+    myBtn = document.getElementById(`btn-add-0${index}`);
+    
+    if(myBtn){
+      myBtn.addEventListener("click", e => {
+        let yourNotice = prompt("Saisissez votre avis : ");
+        document.getElementById(`notice-0${index}`).innerHTML = yourNotice;
+      });
+    }
+  });
 }
