@@ -3,6 +3,7 @@ import {KEY} from '../key.js';
 
 let map = new Map();
 const TILE_SIZE = 256;
+let geocoder = new google.maps.Geocoder();
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
@@ -105,11 +106,38 @@ window.onload = function () {
 
          //Ajout marker
          map.map.addListener('click', function(event) {
-          let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${event.latLng.lat()},${event.latLng.lng()}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;
-          
-          restoVisible.push(addResto(event.latLng, img));
+          let lat = "";
+          let lng = "";
+          let address = "";
+          let average = "";
+          let ratings = [{}, {}];
+          let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${event.latLng.lat()},${event.latLng.lng()}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;  
+                
+
+          geocoder.geocode({
+            'latLng': event.latLng
+          }, function(results, status) {
+            if (status == map.map.GeocoderStatus.OK) {
+              if (results[0]) {
+                address = results[0].formatted_address;
+              }
+            }
+          });
+
+          lat = event.latLng.lat();
+          lng = event.latLng.lng();
+
+          let name = addResto(event.latLng, img);
+
+          console.log(name)
+
+          restoVisible.push({name, address, average, ratings, lat, lng});
+
+          console.log(restoVisible);
 
           firstNotice(restoVisible);
+
+          displayResto(restoVisible);
         });
 
       }); 
@@ -204,13 +232,13 @@ function placeMarker(location) {
   return marker;
 }
 
-function addResto(location, img) {
+function addResto(name, address, location, img) {
   let idAccordion = document.getElementById("accordion");
 
   let marker = placeMarker(location);
     
   let newCard = `<div class="card">
-                  <div id="${marker.id}">
+                  <div id="0-${marker.id}">
                   <h5 class="mb-0">
                     <button id="resto-0${marker.title}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-0${marker.title}" aria-expanded="true" aria-controls="collapse-0${marker.title}">
                     </button>
