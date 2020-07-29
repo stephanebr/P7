@@ -90,57 +90,58 @@ window.onload = function () {
             return map.map.getBounds().contains(marker.getPosition());
         }); 
 
-        let restoVisible = [];
+        map.restoVisible = [];
         visibleMarkers.forEach(marker => {
           map.restosFilter.forEach(resto => {
              if(marker.title === resto.name) {
-                 restoVisible.push(resto);
+                 map.restoVisible.push(resto);
              }
           });       
         });
 
        // map.filterRestoVisible(visibleMarkers);
 
-        displayResto(restoVisible);
-        addNotice(restoVisible);
+        displayResto(map.restoVisible);
+        addNotice(map.restoVisible);
 
-         //Ajout marker
-         map.map.addListener('click', function(event) {
-          let lat = "";
-          let lng = "";
-          let address = "";
-          let average = "";
-          let ratings = [{}, {}];
-          let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${event.latLng.lat()},${event.latLng.lng()}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;  
-                
+      });//Fin idle 
 
-          geocoder.geocode({
-            'latLng': event.latLng
-          }, function(results, status) {
-            if (status == map.map.GeocoderStatus.OK) {
-              if (results[0]) {
-                address = results[0].formatted_address;
-              }
+      //Ajout marker
+      map.map.addListener('click', function(event) {
+        let lat = "";
+        let lng = "";
+        let address = "";
+        let average = "";
+        let ratings = [{}, {}];
+        let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${event.latLng.lat()},${event.latLng.lng()}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;  
+              
+
+        /*geocoder.geocode({
+          'latLng': event.latLng
+        }, function(results, status) {
+          if (status == map.map.GeocoderStatus.OK) {
+            if (results[0]) {
+              address = results[0].formatted_address;
             }
-          });
+          }
+        });*/
 
-          lat = event.latLng.lat();
-          lng = event.latLng.lng();
+        lat = event.latLng.lat();
+        lng = event.latLng.lng();
 
-          let name = addResto(event.latLng, img);
+        let name = addResto(event.latLng, img);
 
-          console.log(name)
+        console.log(name)
 
-          restoVisible.push({name, address, average, ratings, lat, lng});
+        map.list.push({name, address, average, ratings, lat, lng});
+        map.restosFilter.push({name, address, average, ratings, lat, lng});
 
-          console.log(restoVisible);
+        console.log(map.list);
 
-          firstNotice(restoVisible);
+        firstNotice(map.restoVisible);
+        // displayResto(restoVisible);
+      });
 
-          displayResto(restoVisible);
-        });
-
-      }); 
     });
 }
 
@@ -215,7 +216,6 @@ function displayResto(listRestos) {
 }
 
 function placeMarker(location) {
-  let id = 0;
   let name = prompt("Veuillez saisir le nom du restaurant :");
 
   while(name === "" || name === null) {
@@ -223,31 +223,33 @@ function placeMarker(location) {
   }
   
   let marker = new google.maps.Marker({
-      id: id++,
+      id: Date.now(),
       position: location,
       title: name, 
       map: map.map
   });
-
+  
+  map.listMarkers.push(marker); 
   return marker;
 }
 
-function addResto(name, address, location, img) {
+function addResto(location, img) {
   let idAccordion = document.getElementById("accordion");
 
   let marker = placeMarker(location);
+  console.log(marker.id);
     
   let newCard = `<div class="card">
                   <div id="0-${marker.id}">
                   <h5 class="mb-0">
-                    <button id="resto-0${marker.title}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-0${marker.title}" aria-expanded="true" aria-controls="collapse-0${marker.title}">
+                    <button id="resto-0${marker.id}-${marker.title}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-0${marker.title}" aria-expanded="true" aria-controls="collapse-0${marker.title}">
                     </button>
                   </h5>
                 </div>
 
                   <div id="collapse-0${marker.title}" class="collapse hidden" aria-labelledby="0${marker.title}" data-parent="#accordion">
                     <div class="card-body">
-                      <p id="notice-0${marker.id}"></p>
+                      <p id="notice-0$${marker.id}"></p>
                       ${img}
                       <button id="btn-add-0${marker.id}">Ajouter un avis</button>
                     </div>
@@ -255,7 +257,7 @@ function addResto(name, address, location, img) {
                   </div>`;
 
   idAccordion.innerHTML += newCard;
-  let idResto = document.getElementById(`resto-0${marker.title}`);
+  let idResto = document.getElementById(`resto-0${marker.id}-${marker.title}`);
   
   return idResto.innerHTML = marker.title;
 }
