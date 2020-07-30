@@ -3,7 +3,7 @@ import {KEY} from '../key.js';
 
 let map = new Map();
 const TILE_SIZE = 256;
-let geocoder = new google.maps.Geocoder();
+//let geocoder = new google.maps.Geocoder();
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
@@ -112,7 +112,7 @@ window.onload = function () {
         let lng = "";
         let address = "";
         let average = "";
-        let ratings = [{}, {}];
+        let ratings = [{stars: 0, comment: ""}];
         let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${event.latLng.lat()},${event.latLng.lng()}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;  
               
 
@@ -137,9 +137,10 @@ window.onload = function () {
         map.restosFilter.push({name, address, average, ratings, lat, lng});
 
         console.log(map.list);
+        console.log(map.restoVisible);
 
-        firstNotice(map.restoVisible);
-        // displayResto(restoVisible);
+        firstNotice();
+        //displayResto(map.list);
       });
 
     });
@@ -188,7 +189,6 @@ document.getElementById("max").addEventListener("input", function(e) {
   }
 });
 
-
 function addNotice(listRestos) {
   let myBtn = "";
   listRestos.forEach((resto, index) => {
@@ -224,6 +224,7 @@ function placeMarker(location) {
   
   let marker = new google.maps.Marker({
       id: Date.now(),
+      star: 1,
       position: location,
       title: name, 
       map: map.map
@@ -237,41 +238,50 @@ function addResto(location, img) {
   let idAccordion = document.getElementById("accordion");
 
   let marker = placeMarker(location);
-  console.log(marker.id);
     
   let newCard = `<div class="card">
                   <div id="0-${marker.id}">
                   <h5 class="mb-0">
-                    <button id="resto-0${marker.id}-${marker.title}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-0${marker.title}" aria-expanded="true" aria-controls="collapse-0${marker.title}">
+                    <button id="resto-${marker.id}-${marker.title}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-0${marker.title}" aria-expanded="true" aria-controls="collapse-0${marker.title}">
                     </button>
                   </h5>
                 </div>
 
                   <div id="collapse-0${marker.title}" class="collapse hidden" aria-labelledby="0${marker.title}" data-parent="#accordion">
                     <div class="card-body">
+                      <strong id="star-${marker.id}">${marker.star}</strong>
                       <p id="notice-0$${marker.id}"></p>
                       ${img}
-                      <button id="btn-add-0${marker.id}">Ajouter un avis</button>
+                      <button id="btn-add-${marker.id}">Ajouter un avis</button>
                     </div>
                     </div>
                   </div>`;
 
   idAccordion.innerHTML += newCard;
-  let idResto = document.getElementById(`resto-0${marker.id}-${marker.title}`);
+  let idResto = document.getElementById(`resto-${marker.id}-${marker.title}`);
   
   return idResto.innerHTML = marker.title;
 }
 
-function firstNotice(listRestos) {
+function firstNotice() {
   let myBtn = "";
-  listRestos.forEach((resto, index) => {
-    myBtn = document.getElementById(`btn-add-0${index}`);
+
+  map.listMarkers.forEach(marker => {
+    myBtn = document.getElementById(`btn-add-${marker.id}`);
     
     if(myBtn){
       myBtn.addEventListener("click", e => {
+        marker.star = Number(prompt("Veuillez saisir une note entre 1 et 5 : "));
+        while(marker.star > 5 || marker.star < 1) {
+          marker.star = Number(prompt("Veuillez saisir une note entre 1 et 5 : "));
+        }
+
+        document.getElementById(`star-${marker.id}`).innerHTML = marker.star;
         let yourNotice = prompt("Saisissez votre avis : ");
-        document.getElementById(`notice-0${index}`).innerHTML = yourNotice;
+        document.getElementById(`notice-0${marker.id}`).innerHTML = yourNotice;
       });
     }
+
+    console.log(marker.id);
   });
 }
