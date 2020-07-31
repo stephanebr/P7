@@ -3,6 +3,7 @@ import {KEY} from '../key.js';
 
 let map = new Map();
 const TILE_SIZE = 256;
+let newMarker = {};
 //let geocoder = new google.maps.Geocoder();
 
 // The mapping between latitude, longitude and pixels is defined by the web
@@ -103,16 +104,19 @@ window.onload = function () {
 
         displayResto(map.restoVisible);
         addNotice(map.restoVisible);
+        console.log(map.restosFilter);
 
       });//Fin idle 
 
       //Ajout marker
       map.map.addListener('click', function(event) {
+        let notice = firstNotice();
+        console.log(notice);
         let lat = "";
         let lng = "";
         let address = "";
         let average = "";
-        let ratings = [{stars: 0, comment: ""}];
+        let ratings = [{stars: 0, comment: notice}];
         let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${event.latLng.lat()},${event.latLng.lng()}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;  
               
 
@@ -137,8 +141,7 @@ window.onload = function () {
         map.restosFilter.push({name, address, average, ratings, lat, lng});
 
         console.log(map.list);
-        console.log(map.restoVisible);
-
+        
         firstNotice();
         //displayResto(map.list);
       });
@@ -237,51 +240,50 @@ function placeMarker(location) {
 function addResto(location, img) {
   let idAccordion = document.getElementById("accordion");
 
-  let marker = placeMarker(location);
+  newMarker = placeMarker(location);
     
   let newCard = `<div class="card">
-                  <div id="0-${marker.id}">
+                  <div id="0-${newMarker.id}">
                   <h5 class="mb-0">
-                    <button id="resto-${marker.id}-${marker.title}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-0${marker.title}" aria-expanded="true" aria-controls="collapse-0${marker.title}">
+                    <button id="resto-${newMarker.id}-${newMarker.title}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-0${newMarker.title}" aria-expanded="true" aria-controls="collapse-0${newMarker.title}">
                     </button>
                   </h5>
                 </div>
 
-                  <div id="collapse-0${marker.title}" class="collapse hidden" aria-labelledby="0${marker.title}" data-parent="#accordion">
+                  <div id="collapse-0${newMarker.title}" class="collapse hidden" aria-labelledby="0${newMarker.title}" data-parent="#accordion">
                     <div class="card-body">
-                      <strong id="star-${marker.id}">${marker.star}</strong>
-                      <p id="notice-0$${marker.id}"></p>
+                      <strong id="star-${newMarker.id}">${newMarker.star}</strong>
+                      <p id="notice-0${newMarker.id}"></p>
                       ${img}
-                      <button id="btn-add-${marker.id}">Ajouter un avis</button>
+                      <button id="btn-add-${newMarker.id}">Ajouter un avis</button>
                     </div>
                     </div>
                   </div>`;
 
   idAccordion.innerHTML += newCard;
-  let idResto = document.getElementById(`resto-${marker.id}-${marker.title}`);
+  let idResto = document.getElementById(`resto-${newMarker.id}-${newMarker.title}`);
   
-  return idResto.innerHTML = marker.title;
+  return idResto.innerHTML = newMarker.title;
 }
 
 function firstNotice() {
   let myBtn = "";
+  let yourNotice = "";
 
   map.listMarkers.forEach(marker => {
     myBtn = document.getElementById(`btn-add-${marker.id}`);
     
-    if(myBtn){
+    if(myBtn) {
       myBtn.addEventListener("click", e => {
         marker.star = Number(prompt("Veuillez saisir une note entre 1 et 5 : "));
-        while(marker.star > 5 || marker.star < 1) {
+        while(marker.star > 5 || marker.star < 1 || marker.star === "" || isNaN(marker.star)) {
           marker.star = Number(prompt("Veuillez saisir une note entre 1 et 5 : "));
         }
 
         document.getElementById(`star-${marker.id}`).innerHTML = marker.star;
-        let yourNotice = prompt("Saisissez votre avis : ");
+        yourNotice = prompt("Saisissez votre avis : ");
         document.getElementById(`notice-0${marker.id}`).innerHTML = yourNotice;
       });
     }
-
-    console.log(marker.id);
   });
 }
