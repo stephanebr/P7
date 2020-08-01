@@ -4,7 +4,7 @@ import {KEY} from '../key.js';
 let map = new Map();
 const TILE_SIZE = 256;
 let newMarker = {};
-//let geocoder = new google.maps.Geocoder();
+let geocoder = new google.maps.Geocoder();
 
 // The mapping between latitude, longitude and pixels is defined by the web
 // mercator projection.
@@ -120,15 +120,15 @@ window.onload = function () {
         let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${event.latLng.lat()},${event.latLng.lng()}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;  
               
 
-        /*geocoder.geocode({
+        geocoder.geocode({
           'latLng': event.latLng
         }, function(results, status) {
-          if (status == map.map.GeocoderStatus.OK) {
+          if (status == google.maps.GeocoderStatus.OK) {
             if (results[0]) {
               address = results[0].formatted_address;
             }
           }
-        });*/
+        });
 
         lat = event.latLng.lat();
         lng = event.latLng.lng();
@@ -254,6 +254,7 @@ function addResto(location, img) {
                     <div class="card-body">
                       <strong id="star-${newMarker.id}">${newMarker.star}</strong>
                       <p id="notice-0${newMarker.id}"></p>
+                      ${map.restoVisible.address}
                       ${img}
                       <button id="btn-add-${newMarker.id}">Ajouter un avis</button>
                     </div>
