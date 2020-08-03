@@ -33,23 +33,31 @@ function displayComment (listComments) {
 function elementCard(numResto, nameResto, listP, latitude, longitude) {
   let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${latitude},${longitude}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;
 
-  let card = `<div class="card">
-                <div id="${numResto}">
-                  <h5 class="mb-0">
-                    <button id="resto-${nameResto}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-${nameResto}" aria-expanded="true" aria-controls="collapse-${nameResto}">
-                    </button>
-                  </h5>
-                </div>
+  let card = "";
 
-                <div id="collapse-${nameResto}" class="collapse hidden" aria-labelledby="${nameResto}" data-parent="#accordion">
-                  <div class="card-body">
-                    ${displayComment(listP)}
-                    <p id="notice-${numResto}"></p>
-                    ${img}
-                    <button id="btn-add-${numResto}">Ajouter un avis</button>
+  map.listMarkers.forEach(marker => {
+    map.list.forEach(star => {
+      card = `<div class="card">
+                  <div id="${numResto}">
+                    <h5 class="mb-0">
+                      <button id="resto-${nameResto}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-${nameResto}" aria-expanded="true" aria-controls="collapse-${nameResto}">
+                      </button>
+                    </h5>
                   </div>
-                </div>
-              </div>`;
+
+                  <div id="collapse-${nameResto}" class="collapse hidden" aria-labelledby="${nameResto}" data-parent="#accordion">
+                    <div class="card-body">
+                      ${displayComment(listP)}
+                      <strong id="star-${marker.id}"></strong>
+                      <p id="notice-${numResto}"></p>
+                      ${img}
+                      <button id="btn-add-${numResto}">Ajouter un avis</button>
+                    </div>
+                  </div>
+                </div>`;
+    });
+  });
+  
   return card;
 }
 
@@ -142,7 +150,7 @@ window.onload = function () {
 
         console.log(map.list);
         
-        firstNotice();
+        addNotice(map.restoVisible);
         //displayResto(map.list);
       });
 
@@ -194,17 +202,35 @@ document.getElementById("max").addEventListener("input", function(e) {
 
 function addNotice(listRestos) {
   let myBtn = "";
+  let yourNotice = "";
+
   listRestos.forEach((resto, index) => {
     myBtn = document.getElementById(`btn-add-${index}`);
+        //**************** */
+        if(myBtn) {
+          myBtn.addEventListener("click", e => {
+            let star = Number(prompt("Veuillez saisir une note entre 1 et 5 : "));
+            
+            while(star > 5 || star < 1 || star === "" || isNaN(star)) {
+              star = Number(prompt("Veuillez saisir une note entre 1 et 5 : "));
+            }
     
-    if(myBtn){
-      myBtn.addEventListener("click", e => {
-        let yourNotice = prompt("Saisissez votre avis : ");
-        document.getElementById(`notice-${index}`).innerHTML = yourNotice;
-      });
-    }
+            document.getElementById(`star-${map.listMarkers.id}`).innerHTML = star;
+            yourNotice = prompt("Saisissez votre avis : ");
+            document.getElementById(`notice-${index}`).innerHTML = yourNotice;
+
+            let comment = {
+              stars: star,
+              comment: yourNotice
+            };
+
+            resto.ratings.push(comment);
+            console.log(listRestos);
+          });
+        }
   });
 }
+
 
 // Au changement de valeur de l'input
 // Appeler displayResto en changeant le min
@@ -253,7 +279,7 @@ function addResto(location, img) {
                   <div id="collapse-0${newMarker.title}" class="collapse hidden" aria-labelledby="0${newMarker.title}" data-parent="#accordion">
                     <div class="card-body">
                       <strong id="star-${newMarker.id}">${newMarker.star}</strong>
-                      <p id="notice-0${newMarker.id}"></p>
+                      <p id="notice-${newMarker.id}"></p>
                       ${map.restoVisible.address}
                       ${img}
                       <button id="btn-add-${newMarker.id}">Ajouter un avis</button>
