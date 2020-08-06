@@ -124,7 +124,7 @@ class Map {
         listMarkers.forEach(marker => {
             let isVisible = false;
             listRestos.forEach(resto => {
-               if(marker.title === resto.name) {
+               if(marker.id === resto.id) {
                    isVisible = true;
                }
             });    
