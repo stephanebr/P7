@@ -48,9 +48,10 @@ class Map {
     }
 
     filterRestoVisible(visibleMarkers) {
+        this.restoVisible = [];
         visibleMarkers.forEach(marker => {
             this.restosFilter.forEach(resto => {
-                if(marker.title === resto.name) {
+                if(marker.id === resto.id) {
                     this.restoVisible.push(resto);
                 }
             });       

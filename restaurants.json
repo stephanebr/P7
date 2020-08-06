@@ -1,5 +1,6 @@
 [
    {
+      "id": "1596533424341",
       "name":"Bronco",
       "address":"39 Rue des Petites Écuries, 75010 Paris",
       "lat":48.8737815,
@@ -16,6 +17,7 @@
       ]
    },
    {
+      "id": "1596533424342",
       "name":"Babalou",
       "address":"4 Rue Lamarck, 75018 Paris",
       "lat":48.8865035,
@@ -32,51 +34,54 @@
       ]
    },
    {
-    "name":"Ratacaba",
-    "address":"177B Rue Paul Vaillant Couturie, 94140 Alfortville",
-    "lat":48.804752,
-    "lng":2.419906,
-    "ratings":[
-       {
-          "stars":5,
-          "comment":"Très sympa, accueil chaleureux"
-       },
-       {
-          "stars":5,
-          "comment":"Excellent"
-       }
-    ]
- },
- {
-    "name":"Kalabale",
-    "address":"206 Rue Paul Vaillant Couturier, 94140 Alfortville",
-    "lat":48.802038,
-    "lng":2.421537,
-    "ratings":[
-       {
-          "stars":4,
-          "comment":"Une minuscule pizzeria délicieuse cachée pas loin du centre ville !"
-       },
-       {
-          "stars":4,
-          "comment":"Très bon"
-       }
-    ]
- },
- {
-    "name":"Farfafouille",
-    "address":"71 Quai Blanqui, 94140 Alfortville",
-    "lat":48.800992, 
-    "lng":2.417717,
-    "ratings":[
-       {
-          "stars":2,
-          "comment":"Une minuscule pizzeria délicieuse !"
-       },
-       {
-          "stars":1,
-          "comment":"J'ai trouvé ça correct, sans plus"
-       }
-    ]
- }
+      "id": "1596533424343",
+      "name":"Ratacaba",
+      "address":"177B Rue Paul Vaillant Couturie, 94140 Alfortville",
+      "lat":48.804752,
+      "lng":2.419906,
+      "ratings":[
+         {
+            "stars":5,
+            "comment":"Très sympa, accueil chaleureux"
+         },
+         {
+            "stars":5,
+            "comment":"Excellent"
+         }
+      ]
+   },
+   {
+      "id": "1596533424344",
+      "name":"Kalabale",
+      "address":"206 Rue Paul Vaillant Couturier, 94140 Alfortville",
+      "lat":48.802038,
+      "lng":2.421537,
+      "ratings":[
+         {
+            "stars":4,
+            "comment":"Une minuscule pizzeria délicieuse cachée pas loin du centre ville !"
+         },
+         {
+            "stars":4,
+            "comment":"Très bon"
+         }
+      ]
+   },
+   {
+      "id": "1596533424345",
+      "name":"Farfafouille",
+      "address":"71 Quai Blanqui, 94140 Alfortville",
+      "lat":48.800992, 
+      "lng":2.417717,
+      "ratings":[
+         {
+            "stars":2,
+            "comment":"Une minuscule pizzeria délicieuse !"
+         },
+         {
+            "stars":1,
+            "comment":"J'ai trouvé ça correct, sans plus"
+         }
+      ]
+   }
 ]

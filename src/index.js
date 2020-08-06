@@ -34,30 +34,24 @@ function elementCard(numResto, nameResto, listP, latitude, longitude) {
   let img = `<img src="https://maps.googleapis.com/maps/api/streetview?size=400x200&location=${latitude},${longitude}&fov=80&heading=70&pitch=0&key=${KEY}"/>`;
 
   let card = "";
+  card = `<div class="card">
+              <div id="${numResto}">
+                <h5 class="mb-0">
+                  <button id="resto-${numResto}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-${numResto}" aria-expanded="true" aria-controls="collapse-${nameResto}">
+                  </button>
+                </h5>
+              </div>
 
-  map.listMarkers.forEach(marker => {
-    map.list.forEach(star => {
-      card = `<div class="card">
-                  <div id="${numResto}">
-                    <h5 class="mb-0">
-                      <button id="resto-${nameResto}" class="btn btn-primary btn-block" data-toggle="collapse" data-target="#collapse-${nameResto}" aria-expanded="true" aria-controls="collapse-${nameResto}">
-                      </button>
-                    </h5>
-                  </div>
-
-                  <div id="collapse-${nameResto}" class="collapse hidden" aria-labelledby="${nameResto}" data-parent="#accordion">
-                    <div class="card-body">
-                      ${displayComment(listP)}
-                      <strong id="star-${marker.id}"></strong>
-                      <p id="notice-${numResto}"></p>
-                      ${img}
-                      <button id="btn-add-${numResto}">Ajouter un avis</button>
-                    </div>
-                  </div>
-                </div>`;
-    });
-  });
-  
+              <div id="collapse-${numResto}" class="collapse hidden" aria-labelledby="${nameResto}" data-parent="#accordion">
+                <div class="card-body">
+                  ${displayComment(listP)}
+                  <strong id="star-${numResto}"></strong>
+                  <p id="notice-${numResto}"></p>
+                  ${img}
+                  <button id="btn-add-${numResto}">Ajouter un avis</button>
+                </div>
+              </div>
+            </div>`;  
   return card;
 }
 
@@ -74,6 +68,7 @@ window.onload = function () {
       // Nous parcourons la liste des villes
       map.list.forEach((resto, ind) => {
         let marker = new google.maps.Marker({
+          id: resto.id,
           // A chaque boucle, la latitude et la longitude sont lues dans le tableau
           position: {
             lat: resto.lat,
@@ -91,6 +86,7 @@ window.onload = function () {
       map.restosFilter = map.filterStar(map.list, 1, 5);
       displayResto(map.restosFilter);
       map.filterMarker(map.restosFilter, map.listMarkers);
+      addNotice(map.restosFilter);
 
       //test
 
@@ -99,14 +95,16 @@ window.onload = function () {
             return map.map.getBounds().contains(marker.getPosition());
         }); 
 
-        map.restoVisible = [];
+        map.filterRestoVisible(visibleMarkers);
+
+        /*map.restoVisible = [];
         visibleMarkers.forEach(marker => {
           map.restosFilter.forEach(resto => {
              if(marker.title === resto.name) {
                  map.restoVisible.push(resto);
              }
           });       
-        });
+        });*/
 
        // map.filterRestoVisible(visibleMarkers);
 
@@ -118,6 +116,11 @@ window.onload = function () {
 
       //Ajout marker
       map.map.addListener('click', function(event) {
+        let id = "";
+        map.listMarkers.forEach(marker => {
+          id = marker.id;          
+        });
+
         let notice = firstNotice();
         console.log(notice);
         let lat = "";
@@ -145,35 +148,27 @@ window.onload = function () {
 
         console.log(name)
 
-        map.list.push({name, address, average, ratings, lat, lng});
-        map.restosFilter.push({name, address, average, ratings, lat, lng});
+        map.list.push({id, name, address, average, ratings, lat, lng});
+        map.restosFilter.push({id, name, address, average, ratings, lat, lng});
 
         console.log(map.list);
         
         addNotice(map.restoVisible);
         //displayResto(map.list);
       });
-
     });
 }
 
 document.getElementById("min").addEventListener("input", function(e){
   if(Number(e.target.value) <= Number(document.getElementById("max").value) && Number(e.target.value) >= 0) {
-    map.restosFilter = map.filterStar(map.list, Number(e.target.value), Number(document.getElementById("max").value));
-    // displayResto(map.restosFilter);
-    map.filterMarker(map.restosFilter, map.listMarkers);
-    const visibleMarkers = map.listMarkers.filter(function(marker) {
-      return map.map.getBounds().contains(marker.getPosition());
-  }); 
+      map.restosFilter = map.filterStar(map.list, Number(e.target.value), Number(document.getElementById("max").value));
+      // displayResto(map.restosFilter);
+      map.filterMarker(map.restosFilter, map.listMarkers);
+      const visibleMarkers = map.listMarkers.filter(function(marker) {
+        return map.map.getBounds().contains(marker.getPosition());
+    }); 
 
-    let restoVisible = [];
-    visibleMarkers.forEach(marker => {
-      map.restosFilter.forEach(resto => {
-        if(marker.title === resto.name) {
-            restoVisible.push(resto);
-        }
-      });       
-    });
+    map.filterRestoVisible(visibleMarkers);
 
     displayResto(restoVisible);
   }
@@ -181,22 +176,16 @@ document.getElementById("min").addEventListener("input", function(e){
 
 document.getElementById("max").addEventListener("input", function(e) {
   if(Number(e.target.value) <= 5 && Number(e.target.value) > Number(document.getElementById("min").value)) {
-    map.restosFilter = map.filterStar(map.list, Number(document.getElementById("min").value), Number(e.target.value));
-    map.filterMarker(map.restosFilter, map.listMarkers);
-    const visibleMarkers = map.listMarkers.filter(function(marker) {
-      return map.map.getBounds().contains(marker.getPosition());
-  }); 
+      map.restosFilter = map.filterStar(map.list, Number(document.getElementById("min").value), Number(e.target.value));
+      map.filterMarker(map.restosFilter, map.listMarkers);
+      const visibleMarkers = map.listMarkers.filter(function(marker) {
+        return map.map.getBounds().contains(marker.getPosition());
+    }); 
 
-  let restoVisible = [];
-  visibleMarkers.forEach(marker => {
-    map.restosFilter.forEach(resto => {
-       if(marker.title === resto.name) {
-           restoVisible.push(resto);
-       }
-    });       
-  });
+    map.filterRestoVisible(visibleMarkers);
 
-  displayResto(restoVisible);
+    displayResto(restoVisible);
+
   }
 });
 
@@ -204,8 +193,9 @@ function addNotice(listRestos) {
   let myBtn = "";
   let yourNotice = "";
 
-  listRestos.forEach((resto, index) => {
-    myBtn = document.getElementById(`btn-add-${index}`);
+  listRestos.forEach(resto => {
+    myBtn = document.getElementById(`btn-add-${resto.id}`);
+    console.log(myBtn);
         //**************** */
         if(myBtn) {
           myBtn.addEventListener("click", e => {
@@ -214,10 +204,10 @@ function addNotice(listRestos) {
             while(star > 5 || star < 1 || star === "" || isNaN(star)) {
               star = Number(prompt("Veuillez saisir une note entre 1 et 5 : "));
             }
-    
-            document.getElementById(`star-${map.listMarkers.id}`).innerHTML = star;
+            
+            document.getElementById(`star-${resto.id}`).innerHTML = star;
             yourNotice = prompt("Saisissez votre avis : ");
-            document.getElementById(`notice-${index}`).innerHTML = yourNotice;
+            document.getElementById(`notice-${resto.id}`).innerHTML = yourNotice;
 
             let comment = {
               stars: star,
@@ -238,8 +228,8 @@ function displayResto(listRestos) {
   let idAccordion = document.getElementById("accordion");
   idAccordion.innerHTML = "";
   listRestos.forEach((resto, index) => {
-    idAccordion.innerHTML += elementCard(index, resto.name, resto.ratings, resto.lat, resto.lng);
-    let idResto = document.getElementById(`resto-${resto.name}`);
+    idAccordion.innerHTML += elementCard(resto.id, resto.name, resto.ratings, resto.lat, resto.lng);
+    let idResto = document.getElementById(`resto-${resto.id}`);
     idResto.innerHTML = resto.name;    
   });
 }
